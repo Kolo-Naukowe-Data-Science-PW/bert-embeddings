@@ -12,7 +12,11 @@ import time
 import math
 import signal
 import hashlib
+import shutil
+import argparse
 from multiprocessing import Pool, Lock, Manager
+
+#np.int = int
 
 pos_resolution = 16  # per beat (quarter note)
 bar_max = 256
@@ -450,35 +454,59 @@ def encoding_to_str(e):
                                    - 1)))  # 8 - 1 for append_eos functionality of binarizer in fairseq
 
 
-if __name__ == '__main__':
-    data_path = input('Dataset zip path: ')
-    prefix = input('OctupleMIDI output path: ')
+def main(data_path, prefix):
+    # Check if the output directory exists.
     if os.path.exists(prefix):
-        print('Output path {} already exists!'.format(prefix))
-        sys.exit(0)
-    os.system('mkdir -p {}'.format(prefix))
+        response = input(f'Output path "{prefix}" already exists. Do you want to overwrite it? [y/N]: ').strip().lower()
+        if response != 'y':
+            print("Exiting without changes.")
+            sys.exit(0)
+        else:
+            # Remove the existing directory and all its contents.
+            shutil.rmtree(prefix)
+
+    # Create the output directory (including parent directories).
+    os.makedirs(prefix, exist_ok=True)
+
+    # Open the dataset ZIP file.
     data_zip = zipfile.ZipFile(data_path, 'r')
-    file_list = [n for n in data_zip.namelist() if n[-4:].lower()
-                 == '.mid' or n[-5:].lower() == '.midi']
+    file_list = [n for n in data_zip.namelist() if n[-4:].lower() == '.mid' or n[-5:].lower() == '.midi']
     random.shuffle(file_list)
-    gen_dictionary('{}/dict.txt'.format(prefix))
+
+    # Generate the dictionary file for tokenization.
+    gen_dictionary(os.path.join(prefix, 'dict.txt'))
     ok_cnt = 0
     all_cnt = 0
+
+    # Process files for train (98%), valid (1%), and test (1%).
     for sp in ['train', 'valid', 'test']:
         total_file_cnt = len(file_list)
-        file_list_split = []
         if sp == 'train':  # 98%
             file_list_split = file_list[: 98 * total_file_cnt // 100]
-        if sp == 'valid':  # 1%
-            file_list_split = file_list[98 * total_file_cnt //
-                                        100: 99 * total_file_cnt // 100]
-        if sp == 'test':  # 1%
+        elif sp == 'valid':  # 1%
+            file_list_split = file_list[98 * total_file_cnt // 100: 99 * total_file_cnt // 100]
+        elif sp == 'test':  # 1%
             file_list_split = file_list[99 * total_file_cnt // 100:]
-        output_file = '{}/midi_{}.txt'.format(prefix, sp)
+
+        output_file = os.path.join(prefix, f'midi_{sp}.txt')
+        # Process the split files in parallel.
         with Pool(pool_num) as p:
             result = list(p.imap_unordered(G, file_list_split))
-            all_cnt += sum((1 if i is not None else 0 for i in result))
-            ok_cnt += sum((1 if i is True else 0 for i in result))
+            all_cnt += sum(1 for i in result if i is not None)
+            ok_cnt += sum(1 for i in result if i is True)
+        # Reset global output_file if needed.
         output_file = None
-    print('{}/{} ({:.2f}%) MIDI files successfully processed'.format(ok_cnt,
-                                                                     all_cnt, ok_cnt / all_cnt * 100))
+
+    if all_cnt > 0:
+        print('{}/{} ({:.2f}%) MIDI files successfully processed'.format(ok_cnt, all_cnt, ok_cnt / all_cnt * 100))
+    else:
+        print("No MIDI files were processed.")
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description="OctupleMIDI Preprocessing Script")
+    parser.add_argument("data_path", type=str, help="Path to the dataset ZIP file")
+    parser.add_argument("prefix", type=str, help="Output directory for OctupleMIDI data")
+    args = parser.parse_args()
+
+    main(args.data_path, args.prefix)

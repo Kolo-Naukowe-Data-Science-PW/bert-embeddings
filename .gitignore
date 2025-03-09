@@ -2,4 +2,4 @@
 data
 __pycache__
 
-CP.pkl
+*.pkl

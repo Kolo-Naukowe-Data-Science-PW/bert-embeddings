@@ -1,10 +1,27 @@
+"""
+This module defines functions for creating and saving dictionaries that map musical events to
+integer indices and vice versa. The dictionaries support four main event classes: 'Bar', 'Position',
+'Pitch', and 'Duration'. Additionally, special tokens like '<PAD>' and '<MASK>' are added for each
+event class.
+
+The module includes:
+- special_token: A helper function for adding special tokens ('<PAD>' and '<MASK>') to the
+  dictionaries.
+- create_cp_file: A function for generating the event-to-word and word-to-event dictionaries and
+  saving them as a tuple to a specified file using pickle.
+
+Usage:
+1. Call `create_cp_file(file_path)` with a valid file path to generate and save the dictionaries.
+2. The dictionaries include mappings for each event class and special tokens.
+"""
+
 import pickle
 from src.constants import DICT_PATH
 
 PAD_TOKEN: str = ' <PAD>'
 MASK_TOKEN: str = ' <MASK>'
 
-def special_tok(cnt: int, cls: str, event2word: dict, word2event: dict) -> int:
+def special_token(cnt: int, cls: str, event2word: dict, word2event: dict) -> int:
     """
     Add special tokens for a given class (e.g., <PAD> and <MASK>) to the dictionaries.
     """
@@ -38,7 +55,7 @@ def create_cp_file(file_path):
     word2event[cls][cnt] = 'Bar Continue'
     cnt += 1
 
-    cnt = special_tok(cnt, cls, event2word, word2event)
+    cnt = special_token(cnt, cls, event2word, word2event)
 
     # Process Position tokens
     cnt, cls = 0, 'Position'
@@ -47,7 +64,7 @@ def create_cp_file(file_path):
         event2word[cls][token] = cnt
         word2event[cls][cnt] = token
         cnt += 1
-    cnt = special_tok(cnt, cls, event2word, word2event)
+    cnt = special_token(cnt, cls, event2word, word2event)
 
     # Process Pitch tokens
     cnt, cls = 0, 'Pitch'
@@ -56,7 +73,7 @@ def create_cp_file(file_path):
         event2word[cls][token] = cnt
         word2event[cls][cnt] = token
         cnt += 1
-    cnt = special_tok(cnt, cls, event2word, word2event)
+    cnt = special_token(cnt, cls, event2word, word2event)
 
     # Process Duration tokens
     cnt, cls = 0, 'Duration'
@@ -65,7 +82,7 @@ def create_cp_file(file_path):
         event2word[cls][token] = cnt
         word2event[cls][cnt] = token
         cnt += 1
-    cnt = special_tok(cnt, cls, event2word, word2event)
+    cnt = special_token(cnt, cls, event2word, word2event)
 
     # Save the tuple (event2word, word2event) to the specified file path using pickle
     with open(file_path, 'wb') as f:

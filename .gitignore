@@ -1,2 +1,5 @@
 .idea
 data
+__pycache__
+
+CP.pkl

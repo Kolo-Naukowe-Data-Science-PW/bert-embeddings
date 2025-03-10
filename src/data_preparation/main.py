@@ -12,7 +12,7 @@ from pathlib import Path
 import numpy as np
 
 from src.constants import DICT_PATH, DEFAULT_OUTPUT_PATH
-from src.data_preparation.encodings.CP import CP
+from src.data_preparation.encodings.cp import CP
 
 
 def get_args():
@@ -93,7 +93,7 @@ def main():
     args = get_args()
     Path(args.output_dir).mkdir(parents=True, exist_ok=True)
 
-    encoding = CP(dict=args.dict)
+    encoding = CP(dict_path=args.dict)
 
     # Use only the input_file as specified in arguments
     files = [args.input_file]

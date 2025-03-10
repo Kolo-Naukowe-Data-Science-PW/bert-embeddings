@@ -10,9 +10,6 @@ from src.data_preparation.encodings.CP import CP
 def get_args():
     parser = argparse.ArgumentParser(description='')
 
-    ### mode ###
-    parser.add_argument('-t', '--task', default='', choices=['melody', 'velocity', 'composer', 'emotion'])
-
     ### path ###
     parser.add_argument('--dict', type=str, default=DICT_PATH)
     parser.add_argument('--dataset', type=str, choices=["pop909", "pop1k7", "ASAP", "pianist8", "emopia"])
@@ -31,25 +28,19 @@ def get_args():
     return args
 
 def extract(files, args, model, mode=''):
-    '''
-    files: list of midi path
-    mode: 'train', 'valid', 'test', ''
-    args.input_dir: '' or the directory to your custom data
-    args.output_dir: the directory to store the data (and answer data) in CP representation
-    '''
     assert len(files)
-
     print(f'Number of {mode} files: {len(files)}')
 
-    segments, ans = model.prepare_data(files, args.task, int(args.max_len))
+    segments, ans = model.prepare_data(files, int(args.max_len))
 
-    dataset = args.dataset if args.dataset != 'pianist8' else 'composer'
+    if args.input_dir == '' and args.input_file == '':
+        print(f'No input specified')
+        return
 
-    if args.input_dir != '' or args.input_file != '':
-        name = args.input_dir or args.input_file
-        if args.name == '':
-            args.name = Path(name).stem
-        output_file = os.path.join(args.output_dir, f'{args.name}.npy')
+    name = args.input_dir or args.input_file
+    if args.name == '':
+        args.name = Path(name).stem
+    output_file = os.path.join(args.output_dir, f'{args.name}.npy')
 
     np.save(output_file, segments)
     print(f'Data shape: {segments.shape}, saved at {output_file}')

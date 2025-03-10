@@ -10,6 +10,9 @@ from src.data_preparation.encodings.CP import CP
 def get_args():
     parser = argparse.ArgumentParser(description='')
 
+    ### mode ###
+    parser.add_argument('-t', '--task', default='', choices=['melody', 'velocity', 'composer', 'emotion'])
+
     ### path ###
     parser.add_argument('--dict', type=str, default=DICT_PATH)
     parser.add_argument('--dataset', type=str, choices=["pop909", "pop1k7", "ASAP", "pianist8", "emopia"])

@@ -1,5 +1,6 @@
 import pickle
 from tqdm import tqdm
+import numpy as np
 
 import src.data_preparation.utils as utils
 

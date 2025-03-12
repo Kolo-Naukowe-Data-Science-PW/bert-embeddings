@@ -1,11 +1,11 @@
 """
 This module defines constants used throughout the project.
 """
-
+from pathlib import Path
 from typing import Final
 import numpy as np
 
-DICT_PATH: Final[str] = 'src/data_preparation/dict/cp_dict.pkl'
+DICT_PATH: Final[str] = str(Path(__file__).resolve().parent / 'data_preparation/dict/cp_dict.pkl')
 DEFAULT_OUTPUT_PATH: Final[str] = 'data/cp_data/tmp'
 
 # utils constants

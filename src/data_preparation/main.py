@@ -8,6 +8,7 @@ the extracted segments to a NumPy file.
 import os
 import argparse
 from pathlib import Path
+from typing import List
 
 import numpy as np
 
@@ -86,6 +87,36 @@ def extract(files, args, model, mode=''):
     np.save(output_file, segments)
     print(f'Data shape: {segments.shape}, saved at {output_file}')
 
+
+def find_midi_files(directory, midi_list):
+    """
+    Recursively iterate through all files in a directory and its subdirectories,
+    appending paths of all MIDI files to the provided list.
+
+    Args:
+        directory (str): Path to the directory to search
+        midi_list (list): List to which MIDI file paths will be appended
+
+    Returns:
+        None: The function modifies the provided midi_list in-place
+    """
+    try:
+        # Ensure the directory exists
+        if not os.path.isdir(directory):
+            print(f"Warning: {directory} is not a valid directory.")
+            return
+
+        # Walk through directory tree
+        for root, _, files in os.walk(directory):
+            for file in files:
+                # Check if file has a MIDI extension
+                if file.lower().endswith(('.mid', '.midi')):
+                    # Get the full path and append to the list
+                    full_path = os.path.join(root, file)
+                    midi_list.append(full_path)
+    except OSError as e:
+        print(f"Error searching directory {directory}: {e}")
+
 def main():
     """
     Main function to run data extraction and processing.
@@ -96,9 +127,14 @@ def main():
     encoding = CP(dict_path=args.dict)
 
     # Use only the input_file as specified in arguments
-    files = [args.input_file]
-    extract(files, args, encoding)
+    files: List[str] = []
 
+    if args.input_file != "":
+        files.append(args.input_file)
+    elif args.input_dir != "":
+        find_midi_files(args.input_dir, files)
+
+    extract(files, args, encoding)
 
 if __name__ == '__main__':
     main()

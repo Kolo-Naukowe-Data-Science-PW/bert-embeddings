@@ -18,11 +18,11 @@ from src.data_preparation.encodings.cp import CP
 
 def get_args():
     """
-        Parse and return command-line arguments.
+    Parse and return command-line arguments.
 
-        Returns:
-            argparse.Namespace: Parsed command-line arguments.
-        """
+    Returns:
+        argparse.Namespace: Parsed command-line arguments.
+    """
     parser = argparse.ArgumentParser(
         description='Extract MIDI data and process it with the CP model.'
     )

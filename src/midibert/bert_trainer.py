@@ -10,11 +10,8 @@ import sys
 import shutil
 import copy
 
-from MidiBERT.model import MidiBert
-from MidiBERT.modelLM import MidiBertLM
-
-from torch.cuda.memory import _dump_snapshot
-
+from src.midibert.midi_bert import MidiBert
+from src.midibert.midi_bert_lm import MidiBertLM
 
 class BERTTrainer:
     def __init__(self, midibert: MidiBert, train_dataloader, valid_dataloader,

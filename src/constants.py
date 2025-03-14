@@ -8,7 +8,7 @@ import numpy as np
 # paths
 DICT_PATH: Final[str] = str(Path(__file__).resolve().parent / 'data_preparation/dict/cp_dict.pkl')
 DEFAULT_OUTPUT_PATH: Final[str] = 'data/cp_data/tmp'
-DEFAULT_DATA_PATH: Final[str] = 'data/CP_data/tmp/Ryuchi_Opus.npy'
+DEFAULT_DATA_PATH: Final[str] = 'data/cp_data/tmp/Ryuichi_Opus.npy'
 
 # data creation parameters
 DEFAULT_VELOCITY_BINS = np.array([0, 32, 48, 64, 80, 96, 128])

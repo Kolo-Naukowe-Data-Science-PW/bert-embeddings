@@ -27,4 +27,5 @@ DEFAULT_HIDDEN_SIZE: Final[int] = 768
 DEFAULT_EPOCHS: Final[int] = 500
 DEFAULT_LR = 2e-5
 SPLIT_FACTOR: Final[float] = 0.85
-
+EMBEDDING_SIZE: Final[int] = 256
+WEIGHT_DECAY: Final[float] = 0.01

@@ -102,8 +102,8 @@ def main():
     print("\nLoading Dataset")
     x_train, x_val = load_data(args.input_data)
 
-    trainset = MidiDataset(X=x_train)
-    validset = MidiDataset(X=x_val)
+    trainset = MidiDataset(x=x_train)
+    validset = MidiDataset(x=x_val)
 
     train_loader = DataLoader(trainset, batch_size=args.batch_size, num_workers=args.num_workers,
                               shuffle=True)
@@ -115,7 +115,7 @@ def main():
     configuration = BertConfig(max_position_embeddings=args.max_seq_len,
                                position_embedding_type='relative_key_query',
                                hidden_size=args.hs)
-    midibert = MidiBert(bertConfig=configuration, e2w=e2w, w2e=w2e)
+    midibert = MidiBert(bert_config=configuration, e2w=e2w, w2e=w2e)
 
     print("\nCreating BERT Trainer")
     trainer = BERTTrainer(midibert, train_loader, valid_loader, args.lr, args.batch_size,

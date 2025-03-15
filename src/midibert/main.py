@@ -21,7 +21,6 @@ from torch.utils.data import DataLoader
 from transformers import BertConfig
 
 import src.constants as const
-from src.constants import SPLIT_FACTOR
 from src.midibert.midi_bert import MidiBert
 from src.midibert.midi_dataset import MidiDataset
 from src.midibert.bert_trainer import BERTTrainer
@@ -80,7 +79,7 @@ def load_data(input_data: str):
     index = np.arange(len(training_data))
     np.random.shuffle(index)
     training_data = training_data[index]
-    split = int(len(training_data) * SPLIT_FACTOR)
+    split = int(len(training_data) * const.SPLIT_FACTOR)
     x_train, x_val = training_data[:split], training_data[split:]
 
     return x_train, x_val
@@ -114,7 +113,10 @@ def main():
     print("\nBuilding BERT model")
     configuration = BertConfig(max_position_embeddings=args.max_seq_len,
                                position_embedding_type='relative_key_query',
-                               hidden_size=args.hs)
+                               hidden_size=args.hs,
+                               num_hidden_layers=const.NUM_HIDDEN_LAYERS,
+                               num_attention_heads=const.NUM_ATTENTION_HEADS,
+                               intermediate_size=const.INTERMEDIATE_SIZE)
     midibert = MidiBert(bert_config=configuration, e2w=e2w, w2e=w2e)
 
     print("\nCreating BERT Trainer")

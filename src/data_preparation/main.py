@@ -30,18 +30,6 @@ def get_args():
     # Path arguments
     parser.add_argument('--dict', type=str, default=DICT_PATH,
                         help='Path to the dictionary file.')
-    parser.add_argument(
-        '--dataset',
-        type=str,
-        choices=[
-            "pop909",
-            "pop1k7",
-            "ASAP",
-            "pianist8",
-            "emopia"
-        ],
-        help='Dataset to use.'
-    )
     parser.add_argument('--input_dir', type=str, default='',
                         help='Input directory containing MIDI files.')
     parser.add_argument('--input_file', type=str, default='',

@@ -129,7 +129,7 @@ def main():
     filename = os.path.join(save_dir, 'model.ckpt')
     print("   save model at {filename}")
 
-    best_acc, best_epoch = 0, 0
+    best_acc = 0
     bad_cnt = 0
 
     for epoch in range(args.epochs):
@@ -147,7 +147,7 @@ def main():
         best_acc = max(avg_acc, best_acc)
 
         if is_best:
-            bad_cnt, best_epoch = 0, epoch
+            bad_cnt = 0
         else:
             bad_cnt += 1
 
